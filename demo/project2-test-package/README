@@ -1,0 +1,46 @@
+Name: Calvin Yung
+Email: cyung1@ucla.edu
+UID: 304787184
+
+High Level Design -
+	Server:
+		The server uses a finite state machine to determine the state of
+		connection. When the server has no connection it is in the
+		No_Connection state. When it receives the initial SYN message. It
+		moves to the Waiting state where it waits for the ACK message with
+		the first payload. It processes the packet then moves to Connected,
+		where it continues to receive, log, and ack packets until it gets
+		a FIN message, where it then moves to Closing - the first
+		connection teardown state. It sends an ACK to the initial FIN then
+		immediately sends its own FIN.
+	Client:
+		The client also uses a FSM. The states are the same but the client
+		sends messages then waits for response. Client is more modularized.
+		Send data sends 10 packets (specified window size) all at once, then
+		waits to receive all specified packets.
+
+	Pipelining only occurs in the Connected state -
+		   during connection setup and tear down, there is no pipelining
+		   and the server and client block and wait for an ack before
+		   continuing. 
+
+
+Problems - 
+	 I had a lot of problem with connection set up. The UDP API was completely
+	 new to me and I had issues with sendto failing due to incorrectly setting
+	 the server address length.
+	 Another issue that I spent a large amount of time to fix was checking
+	 sequence numbers. It was difficult to keep track of all the different
+	 variables when I was working on the project, and I had to spend a
+	 significant amount of time going over the given examples and matching to
+	 my progam's output. I had a lot of issues implementing connection tear down
+	 because the example given in the specifications was somewhat confusing and
+	 lacking in information. Because tear down and pipelining changed the normal
+	 flow of sequence numbers, I had implement these unique features while
+	 mantaining the flow of my FSM. 
+
+Libraries -
+	  I used the typical standard C libraries for networking.
+	  For documentation, I mainly used the man pages and occasionally websites
+	  like tutorialspoint.com, stackoverflow.com, and geeksforgeeks.org for a
+	  better understanding of the standard C libraries and functions.
